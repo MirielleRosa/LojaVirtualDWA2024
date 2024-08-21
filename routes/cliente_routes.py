@@ -174,6 +174,7 @@ async def get_pagamento(request: Request, id_pedido: int = Path(...)):
         )
         return response
     # captura os itens do pedido
+    PedidoRepo.alterar_estado(id_pedido, EstadoPedido.PENDENTE.value)
     itens = ItemPedidoRepo.obter_por_pedido(pedido.id)
     total_pedido = sum([item.valor_item for item in itens])
     pedido.itens = itens
@@ -350,18 +351,15 @@ async def post_reduzir_item(request: Request, id_produto: int = Form(0)):
     return response
 
 
-@router.post("/post_remover_item", response_class=RedirectResponse)
+router.post("/post_remover_item", response_class=RedirectResponse)
 async def post_remover_item(request: Request, id_produto: int = Form(0)):
     if not id_produto:
         return RedirectResponse("/cliente/carrinho", status.HTTP_304_NOT_MODIFIED)
-    
     produto = ProdutoRepo.obter_um(id_produto)
-
     if not produto:
-        reponse = RedirectResponse("/cliente/carrinho", status.HTTP_304_NOT_MODIFIED)
+        respose = RedirectResponse("cliente/carrinho", status.HTTP_304_NOT_MODIFIED)
         adicionar_mensagem_alerta(response, "Produto não encontrado.")
         return response
-
     pedidos = PedidoRepo.obter_por_estado(
         request.state.cliente.id, EstadoPedido.CARRINHO.value
     )
@@ -375,10 +373,10 @@ async def post_remover_item(request: Request, id_produto: int = Form(0)):
         adicionar_mensagem_alerta(
             f"O produto {id_produto} não foi encontrado em seu carrinho."
         )
-        return response
+        return response 
     ItemPedidoRepo.excluir(pedido_carrinho.id, id_produto)
-    response = RedirectResponse("/cliente/carrinho", status.HTTP_303_SEE_OTHER)
-    adicionar_mensagem_sucesso(response, "Item excluido com sucesso.")
+    respose = RedirectResponse("cliente/carrinho", status.HTTP_303_SEE_OTHER)
+    adicionar_mensagem_sucesso(response, "Item excluído com sucesso")
     PedidoRepo.atualizar_valor_total(pedido_carrinho.id)
     return response
 
@@ -396,6 +394,20 @@ async def get_pedidoconfirmado(
         {"request": request, "pedido": pedido},
     )
 
+@router.post("/post_cancelar_pedido/{id_pedido:int}", response_class=HTMLResponse)
+async def post_cancelar_pedido(
+    request: Request,
+    id_pedido: int = Form(0),
+):
+    pedido = PedidoRepo.obter_por_id(id_pedido)
+    if not pedido or pedido.id_cliente != request.state.cliente.id:
+        response = RedirectResponse(url="/cliente/pedidos", status_code=status.HTTP_302_FOUND)
+        return adicionar_mensagem_erro(response, "Pedido não encontrado. Verifique o número do pedido")
+    PedidoRepo.alterar_estado(id_pedido, EstadoPedido.CANCELADO.value)
+    response = RedirectResponse(url="/cliente/pedidos", status_code=status.HTTP_303_SEE_OTHER)
+    adicionar_mensagem_sucesso(response, "Pediido cancelado com sucesso")
+    return response
+
 
 @router.get("/detalhespedido/{id_pedido:int}", response_class=HTMLResponse)
 async def get_detalhespedido(
@@ -403,7 +415,7 @@ async def get_detalhespedido(
     id_pedido: int = Path(...),
 ):
     pedido = PedidoRepo.obter_por_id(id_pedido)
-    if pedido.id_usuario != request.state.usuario.id:
+    if pedido.id_usuario != request.state.cliente.id:
         response = RedirectResponse(url="/pedidos", status_code=status.HTTP_302_FOUND)
         return adicionar_mensagem_erro(
             response,

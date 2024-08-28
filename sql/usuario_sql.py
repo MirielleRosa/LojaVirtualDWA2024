@@ -7,18 +7,18 @@ SQL_CRIAR_TABELA = """
         endereco TEXT NOT NULL,
         telefone TEXT NOT NULL UNIQUE,
         email TEXT NOT NULL UNIQUE,
-        senha TEXT NOT NULL,
         perfil INTEGER DEFAULT 1,
+        senha TEXT NOT NULL,
         token TEXT)
 """
 
 SQL_INSERIR = """
-    INSERT INTO usuario(nome, cpf, data_nascimento, endereco, telefone, email, senha, perfil)
+    INSERT INTO usuario(nome, cpf, data_nascimento, endereco, telefone, email, perfil, senha)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 """
 
 SQL_OBTER_TODOS_POR_PERFIL = """
-    SELECT id, nome, cpf, data_nascimento, endereco, telefone, email
+    SELECT id, nome, cpf, data_nascimento, endereco, telefone, email, perfil
     FROM usuario
     WHERE perfil=?
     ORDER BY nome

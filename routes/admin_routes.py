@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from dtos.novo_produto_DTO import NovoProdutoDTO
 from repositories.produto_repo import ProdutoRepo
 
 
@@ -11,6 +12,5 @@ async def obter_produtos():
     return produtos
 
 @router.post("/inserir_produtos")
-async def inserir_produtos():
-    produtos = ProdutoRepo.obter_todos()
-    return produtos
+async def inserir_produtos(produto: NovoProdutoDTO):
+    pass

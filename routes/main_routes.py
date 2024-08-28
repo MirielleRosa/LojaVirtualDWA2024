@@ -5,9 +5,9 @@ from fastapi.responses import HTMLResponse, JSONResponse
 
 from dtos.entrar_dto import EntrarDTO
 from util.html import ler_html
-from dtos.novo_cliente_dto import NovoClienteDTO
-from models.cliente_model import Cliente
-from repositories.cliente_repo import ClienteRepo
+from dtos.novo_usuario_dto import NovoUsuarioDTO
+from models.usuario_model import Usuario
+from repositories.usuario_repo import UsuarioRepo
 from repositories.produto_repo import ProdutoRepo
 from util.auth import (
     conferir_senha,
@@ -58,12 +58,12 @@ async def get_cadastro(request: Request):
 
 
 @router.post("/post_cadastro", response_class=JSONResponse)
-async def post_cadastro(cliente_dto: NovoClienteDTO):
-    cliente_data = cliente_dto.model_dump(exclude={"confirmacao_senha"})
-    cliente_data["senha"] = obter_hash_senha(cliente_data["senha"])
-    novo_cliente = ClienteRepo.inserir(Cliente(**cliente_data))
-    if not novo_cliente or not novo_cliente.id:
-        raise HTTPException(status_code=400, detail="Erro ao cadastrar cliente.")
+async def post_cadastro(usuario_dto: NovoUsuarioDTO):
+    usuario_data = usuario_dto.model_dump(exclude={"confirmacao_senha"})
+    usuario_data["senha"] = obter_hash_senha(usuario_data["senha"])
+    novo_usuario = UsuarioRepo.inserir(Usuario(**usuario_data))
+    if not novo_usuario or not novo_usuario.id:
+        raise HTTPException(status_code=400, detail="Erro ao cadastrar usuario.")
     return {"redirect": {"url": "/cadastro_realizado"}}
 
 
@@ -91,11 +91,11 @@ async def get_entrar(
 
 @router.post("/post_entrar", response_class=JSONResponse)
 async def post_entrar(entrar_dto: EntrarDTO):
-    cliente_entrou = ClienteRepo.obter_por_email(entrar_dto.email)
+    usuario_entrou = UsuarioRepo.obter_por_email(entrar_dto.email)
     if (
-        (not cliente_entrou)
-        or (not cliente_entrou.senha)
-        or (not conferir_senha(entrar_dto.senha, cliente_entrou.senha))
+        (not usuario_entrou)
+        or (not usuario_entrou.senha)
+        or (not conferir_senha(entrar_dto.senha, usuario_entrou.senha))
     ):
         return JSONResponse(
             content=create_validation_errors(
@@ -106,14 +106,14 @@ async def post_entrar(entrar_dto: EntrarDTO):
             status_code=status.HTTP_404_NOT_FOUND,
         )
     token = gerar_token()
-    if not ClienteRepo.alterar_token(cliente_entrou.id, token):
+    if not UsuarioRepo.alterar_token(usuario_entrou.id, token):
         raise DatabaseError(
-            "Não foi possível alterar o token do cliente no banco de dados."
+            "Não foi possível alterar o token do usuario no banco de dados."
         )
     response = JSONResponse(content={"redirect": {"url": entrar_dto.return_url}})
     adicionar_mensagem_sucesso(
         response,
-        f"Olá, <b>{cliente_entrou.nome}</b>. Seja bem-vindo(a) à Loja Virtual!",
+        f"Olá, <b>{usuario_entrou.nome}</b>. Seja bem-vindo(a) à Loja Virtual!",
     )
     adicionar_cookie_auth(response, token)
     return response

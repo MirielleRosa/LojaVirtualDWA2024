@@ -4,12 +4,12 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 import mercadopago as mp
 import os
 
-from dtos.alterar_cliente_dto import AlterarClienteDTO
+from dtos.alterar_usuario_dto import AlterarUsuarioDTO
 from dtos.alterar_senha_dto import AlterarSenhaDTO
-from models.cliente_model import Cliente
+from models.usuario_model import Usuario
 from models.item_pedido_model import ItemPedido
 from models.pedido_model import EstadoPedido, Pedido
-from repositories.cliente_repo import ClienteRepo
+from repositories.usuario_repo import UsuarioRepo
 from repositories.item_pedido_repo import ItemPedidoRepo
 from repositories.pedido_repo import PedidoRepo
 from repositories.produto_repo import ProdutoRepo
@@ -55,11 +55,11 @@ async def get_cadastro(request: Request):
 
 
 @router.post("/post_cadastro", response_class=JSONResponse)
-async def post_cadastro(request: Request, alterar_dto: AlterarClienteDTO):
+async def post_cadastro(request: Request, alterar_dto: AlterarUsuarioDTO):
     id = request.state.cliente.id
     cliente_data = alterar_dto.model_dump()
     response = JSONResponse({"redirect": {"url": "/cliente/cadastro"}})
-    if ClienteRepo.alterar(Cliente(id, **cliente_data)):
+    if UsuarioRepo.alterar(Usuario(id, **cliente_data)):
         adicionar_mensagem_sucesso(response, "Cadastro alterado com sucesso!")
     else:
         adicionar_mensagem_erro(
@@ -79,13 +79,13 @@ async def get_senha(request: Request):
 @router.post("/post_senha", response_class=JSONResponse)
 async def post_senha(request: Request, alterar_dto: AlterarSenhaDTO):
     email = request.state.cliente.email
-    cliente_bd = ClienteRepo.obter_por_email(email)
+    cliente_bd = UsuarioRepo.obter_por_email(email)
     nova_senha_hash = obter_hash_senha(alterar_dto.nova_senha)
     response = JSONResponse({"redirect": {"url": "/cliente/senha"}})
     if not conferir_senha(alterar_dto.senha, cliente_bd.senha):
         adicionar_mensagem_erro(response, "Senha atual incorreta!")
         return response
-    if ClienteRepo.alterar_senha(cliente_bd.id, nova_senha_hash):
+    if UsuarioRepo.alterar_senha(cliente_bd.id, nova_senha_hash):
         adicionar_mensagem_sucesso(response, "Senha alterada com sucesso!")
     else:
         adicionar_mensagem_erro(response, "Não foi possível alterar sua senha!")
@@ -95,7 +95,7 @@ async def post_senha(request: Request, alterar_dto: AlterarSenhaDTO):
 @router.get("/sair", response_class=RedirectResponse)
 async def get_sair(request: Request):
     if request.state.cliente:
-        ClienteRepo.alterar_token(request.state.cliente.email, "")
+        UsuarioRepo.alterar_token(request.state.cliente.email, "")
     response = RedirectResponse("/", status.HTTP_303_SEE_OTHER)
     excluir_cookie_auth(response)
     adicionar_mensagem_sucesso(response, "Saída realizada com sucesso!")
@@ -194,8 +194,8 @@ async def get_pagamento(request: Request, id_pedido: int = Path(...)):
             }
         ],
         # "payer": {
-        #     "name": request.state.usuario.nome,
-        #     "email": request.state.usuario.email,
+        #     "name": request.state.cliente.nome,
+        #     "email": request.state.cliente.email,
         # },
         "payer": {
             "name": "Test",

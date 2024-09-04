@@ -27,7 +27,7 @@ class PedidoRepo:
                         pedido.valor_total,
                         pedido.endereco_entrega,
                         pedido.estado,
-                        pedido.id_usuario,
+                        pedido.id_cliente,
                     ),
                 )
                 if cursor.rowcount > 0:
@@ -138,11 +138,11 @@ class PedidoRepo:
             return None
 
     @classmethod
-    def obter_quantidade(cls, id_usuario: int) -> Optional[int]:
+    def obter_quantidade(cls, id_cliente: int) -> Optional[int]:
         try:
             with obter_conexao() as conexao:
                 cursor = conexao.cursor()
-                tupla = cursor.execute(SQL_OBTER_QUANTIDADE, (id_usuario,)).fetchone()
+                tupla = cursor.execute(SQL_OBTER_QUANTIDADE, (id_cliente,)).fetchone()
                 return int(tupla[0])
         except sqlite3.Error as ex:
             print(ex)
@@ -150,7 +150,7 @@ class PedidoRepo:
 
     @classmethod
     def obter_por_periodo(
-        cls, id_usuario: int, data_inicial: datetime, data_final: datetime
+        cls, id_cliente: int, data_inicial: datetime, data_final: datetime
     ) -> List[Pedido]:
         try:
             with obter_conexao() as conexao:
@@ -158,7 +158,7 @@ class PedidoRepo:
                 tuplas = cursor.execute(
                     SQL_OBTER_POR_PERIODO,
                     (
-                        id_usuario,
+                        id_cliente,
                         data_inicial,
                         data_final,
                     ),
@@ -171,7 +171,7 @@ class PedidoRepo:
 
     @classmethod
     def obter_quantidade_por_periodo(
-        cls, id_usuario: int, data_inicial: datetime, data_final: datetime
+        cls, id_cliente: int, data_inicial: datetime, data_final: datetime
     ) -> Optional[int]:
         try:
             with obter_conexao() as conexao:
@@ -179,7 +179,7 @@ class PedidoRepo:
                 tupla = cursor.execute(
                     SQL_OBTER_QUANTIDADE_POR_PERIODO,
                     (
-                        id_usuario,
+                        id_cliente,
                         data_inicial,
                         data_final,
                     ),
@@ -190,14 +190,14 @@ class PedidoRepo:
             return None
 
     @classmethod
-    def obter_por_estado(cls, id_usuario: int, estado: int) -> List[Pedido]:
+    def obter_por_estado(cls, id_cliente: int, estado: int) -> List[Pedido]:
         try:
             with obter_conexao() as conexao:
                 cursor = conexao.cursor()
                 tuplas = cursor.execute(
                     SQL_OBTER_POR_ESTADO,
                     (
-                        id_usuario,
+                        id_cliente,
                         estado,
                     ),
                 ).fetchall()

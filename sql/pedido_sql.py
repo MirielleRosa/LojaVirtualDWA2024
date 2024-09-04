@@ -5,12 +5,12 @@ SQL_CRIAR_TABELA = """
         valor_total FLOAT NOT NULL,
         endereco_entrega TEXT NOT NULL,
         estado TEXT NOT NULL,
-        id_usuario INTEGER NOT NULL,
-        FOREIGN KEY (id_usuario) REFERENCES usuario(id))
+        id_cliente INTEGER NOT NULL,
+        FOREIGN KEY (id_cliente) REFERENCES cliente(id))
 """
 
 SQL_INSERIR = """
-    INSERT INTO pedido(data_hora, valor_total, endereco_entrega, estado, id_usuario)
+    INSERT INTO pedido(data_hora, valor_total, endereco_entrega, estado, id_cliente)
     VALUES (?, ?, ?, ?, ?)
 """
 
@@ -44,7 +44,7 @@ SQL_EXCLUIR = """
 """
 
 SQL_OBTER_POR_ID = """
-    SELECT id, data_hora, valor_total, endereco_entrega, estado, id_usuario
+    SELECT id, data_hora, valor_total, endereco_entrega, estado, id_cliente
     FROM pedido
     WHERE id=?
 """
@@ -52,24 +52,24 @@ SQL_OBTER_POR_ID = """
 SQL_OBTER_QUANTIDADE = """
     SELECT COUNT(*) 
     FROM pedido
-    WHERE id_usuario=?
+    WHERE id_cliente=?
 """
 
 SQL_OBTER_POR_PERIODO = """
-    SELECT id, data_hora, valor_total, endereco_entrega, estado, id_usuario
+    SELECT id, data_hora, valor_total, endereco_entrega, estado, id_cliente
     FROM pedido
-    WHERE (id_usuario = ?) AND (data_hora BETWEEN ? AND ?)
+    WHERE (id_cliente = ?) AND (data_hora BETWEEN ? AND ?)
     ORDER BY data_hora DESC
 """
 
 SQL_OBTER_QUANTIDADE_POR_PERIODO = """
     SELECT COUNT(*) 
     FROM pedido
-    WHERE (id_usuario = ?) AND (data_hora BETWEEN ? AND ?)
+    WHERE (id_cliente = ?) AND (data_hora BETWEEN ? AND ?)
 """
 
 SQL_OBTER_POR_ESTADO = """
-    SELECT id, data_hora, valor_total, endereco_entrega, estado, id_usuario
+    SELECT id, data_hora, valor_total, endereco_entrega, estado, id_cliente
     FROM pedido
-    WHERE (id_usuario = ?) AND (estado = ?)
+    WHERE (id_cliente = ?) AND (estado = ?)
 """

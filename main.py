@@ -4,7 +4,7 @@ from repositories.usuario_repo import UsuarioRepo
 from repositories.item_pedido_repo import ItemPedidoRepo
 from repositories.pedido_repo import PedidoRepo
 from repositories.produto_repo import ProdutoRepo
-from routes import cliente_routes, main_routes, admin_routes
+from routes import main_routes, cliente_routes, admin_routes
 from util.auth import checar_permissao, middleware_autenticacao
 from util.exceptions import configurar_excecoes
 

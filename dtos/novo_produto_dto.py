@@ -6,7 +6,7 @@ from util.validators import *
 
 class NovoProdutoDTO(BaseModel):
     nome: str
-    preco: float
+    preco: float    
     descricao: str
     estoque: int
 
@@ -18,8 +18,8 @@ class NovoProdutoDTO(BaseModel):
         return v
 
     @field_validator("preco")
-    def valdar_preco(cls, v):
-        msg = is_in_range(v, "Preço")
+    def validar_preco(cls, v):
+        msg = is_in_range(v, "Preço", 0.0, 100000.0)
         if msg:
             raise ValueError(msg)
         return v

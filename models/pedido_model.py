@@ -22,4 +22,4 @@ class Pedido:
     valor_total: Optional[float] = None
     endereco_entrega: Optional[str] = None
     estado: Optional[EstadoPedido] = None
-    id_usuario: Optional[int] = None
+    id_cliente: Optional[int] = None

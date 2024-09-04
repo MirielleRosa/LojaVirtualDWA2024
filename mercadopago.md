@@ -2,7 +2,7 @@
 
 ## Introdução
 
-O Mercado Pago é uma plataforma de pagamentos que permite que você receba pagamentos de seus usuarios de forma simples e segura. Com o Mercado Pago você pode receber pagamentos com cartão de crédito, boleto bancário, transferência bancária, saldo em conta Mercado Pago e outros meios de pagamento.
+O Mercado Pago é uma plataforma de pagamentos que permite que você receba pagamentos de seus clientes de forma simples e segura. Com o Mercado Pago você pode receber pagamentos com cartão de crédito, boleto bancário, transferência bancária, saldo em conta Mercado Pago e outros meios de pagamento.
 
 ## Passos para Criação da Aplicação para Testes
 

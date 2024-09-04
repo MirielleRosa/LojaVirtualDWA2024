@@ -18,7 +18,7 @@ SQL_INSERIR = """
 """
 
 SQL_OBTER_TODOS_POR_PERFIL = """
-    SELECT id, nome, cpf, data_nascimento, endereco, telefone, email, perfil
+    SELECT id, nome, cpf, data_nascimento, endereco, telefone, email
     FROM usuario
     WHERE perfil=?
     ORDER BY nome
@@ -66,7 +66,8 @@ SQL_OBTER_POR_TOKEN = """
 """
 
 SQL_OBTER_QUANTIDADE_POR_PERFIL = """
-    SELECT COUNT(*) FROM usuario
+    SELECT COUNT(*)
+    FROM usuario
     WHERE perfil=?
 """
 

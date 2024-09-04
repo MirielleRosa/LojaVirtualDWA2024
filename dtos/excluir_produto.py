@@ -1,10 +1,13 @@
 from pydantic import BaseModel, field_validator
 
-class ExcluirProdutoDTO(BaseModel):
-    id: int  
-    
-    @field_validator("id")
-    def validar_id(cls, v):
-        if v <= 0:
-            raise ValueError("ID do produto deve ser um número maior que zero.")
+from util.validators import *
+
+
+class ExcluirProdutoDto(BaseModel):
+    id_produto: int
+
+    @field_validator("id_produto")
+    def validar_estoque(cls, v):
+        msg = is_greater_than(v, "Id do Produto", 0)
+        if msg: raise ValueError(msg)
         return v

@@ -3,7 +3,7 @@ from pydantic import BaseModel, field_validator
 from util.validators import *
 
 
-class ExcluirProdutoDto(BaseModel):
+class IdProdutoDTO(BaseModel):
     id_produto: int
 
     @field_validator("id_produto")

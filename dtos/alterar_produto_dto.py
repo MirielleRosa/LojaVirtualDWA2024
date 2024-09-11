@@ -1,18 +1,18 @@
 from pydantic import BaseModel, field_validator
-from datetime import date, datetime, timedelta
 
 from util.validators import *
 
-class AlterarProdutoDTO(BaseModel):
+
+class AlterarProdutoDto(BaseModel):
     id: int
     nome: str
     preco: float    
     descricao: str
     estoque: int
 
-    @field_validator("nome")
+    @field_validator("id")
     def validar_id(cls, v):
-        msg = is_greater_than(v, "id", 0)
+        msg = is_greater_than(v, "Id", 0)
         if msg: raise ValueError(msg)
         return v
 

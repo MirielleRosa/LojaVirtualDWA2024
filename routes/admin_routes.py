@@ -1,3 +1,4 @@
+import asyncio
 from fastapi import APIRouter, Path
 from fastapi.responses import JSONResponse
 
@@ -17,6 +18,7 @@ router = APIRouter(prefix="/admin")
 
 @router.get("/obter_produtos")
 async def obter_produtos():
+    await asyncio.sleep(1)
     produtos = ProdutoRepo.obter_todos()
     return produtos
 
@@ -61,5 +63,6 @@ async def obter_pedido(id_pedido: int = Path(..., title="Id do Pedido", ge=1)):
 
 @router.get("/obter_pedidos_por_estado/{estado}")
 async def obter_pedidos_por_estado(estado: EstadoPedido = Path(..., title="Estado do Pedido")):
+    await asyncio.sleep(1)
     pedidos = PedidoRepo.obter_todos_por_estado(estado.value)
     return pedidos

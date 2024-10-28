@@ -17,7 +17,6 @@ from repositories.usuario_repo import UsuarioRepo
 
 router = APIRouter(prefix="/admin")
 
-
 @router.get("/obter_produtos")
 async def obter_produtos():
     await asyncio.sleep(1)
@@ -81,7 +80,6 @@ async def cancelar_pedido(id_pedido: int = Path(..., title="Id do Pedido", ge=1)
     pd = ProblemDetailsDto("int", f"O pedido com id <b>{id_pedido}</b> não pode ter seu estado evoluído para <b>cancelado</b>.", "state_change_invalid", ["body", "id"])
     return JSONResponse(pd.to_dict(), status_code=404)
     
-
 @router.get("/obter_pedido/{id_pedido}")
 async def obter_pedido(id_pedido: int = Path(..., title="Id do Pedido", ge=1)):
     pedido = PedidoRepo.obter_por_id(id_pedido)
@@ -94,6 +92,13 @@ async def obter_pedidos_por_estado(estado: EstadoPedido = Path(..., title="Estad
     await asyncio.sleep(1)
     pedidos = PedidoRepo.obter_todos_por_estado(estado.value)
     return pedidos
+
+@router.get("/obter_usuarios")
+async def obter_usuarios():
+    await asyncio.sleep(1)
+    usuarios = UsuarioRepo.obter_todos_por_perfil()
+    return usuarios
+
 
 @router.post("/excluir_usuario", status_code=204)
 async def excluir_usuario(inputDto: IdClienteDto):

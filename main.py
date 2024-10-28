@@ -24,7 +24,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.mount(path="/static", app=StaticFiles(directory="static"), name="static")
-app.middleware("http")(checar_autenticacao)
+# app.middleware("http")(checar_autenticacao)
 configurar_excecoes(app)
 app.include_router(main_routes.router)
 app.include_router(cliente_routes.router)

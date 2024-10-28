@@ -5,12 +5,14 @@ from fastapi.responses import JSONResponse
 from dtos.alterar_pedido_dto import AlterarPedidoDto
 from dtos.alterar_produto_dto import AlterarProdutoDto
 from dtos.id_produto_dto import IdProdutoDto
+from dtos.id_usuario_dto import IdClienteDto
 from dtos.inserir_produto_dto import InserirProdutoDto
 from dtos.problem_details_dto import ProblemDetailsDto
 from models.pedido_model import EstadoPedido
 from models.produto_model import Produto
 from repositories.pedido_repo import PedidoRepo
 from repositories.produto_repo import ProdutoRepo
+from repositories.usuario_repo import UsuarioRepo
 
 
 router = APIRouter(prefix="/admin")
@@ -92,3 +94,9 @@ async def obter_pedidos_por_estado(estado: EstadoPedido = Path(..., title="Estad
     await asyncio.sleep(1)
     pedidos = PedidoRepo.obter_todos_por_estado(estado.value)
     return pedidos
+
+@router.post("/excluir_usuario", status_code=204)
+async def excluir_usuario(inputDto: IdClienteDto):
+    if UsuarioRepo.excluir(inputDto.id_usuario): return None
+    pd = ProblemDetailsDto("int", f"O cliente com id <b>{inputDto.id_usuario}</b> não foi encontrado.", "value_not_found", ["body", "id_usuario"])
+    return JSONResponse(pd.to_dict(), status_code=404)

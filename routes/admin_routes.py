@@ -99,9 +99,15 @@ async def obter_usuarios():
     usuarios = UsuarioRepo.obter_todos_por_perfil()
     return usuarios
 
+@router.get("/obter_usuario/{id_usuario}")
+async def obter_usuario(id_usuario: int = Path(..., title="Id do Usuario", ge=1)):
+    usuario = UsuarioRepo.obter_por_id(id_usuario)
+    if usuario: return usuario
+    pd = ProblemDetailsDto("int", f"O usuário com id <b>{id_usuario}</b> não foi encontrado.", "value_not_found", ["body", "id_usuario"])
+    return JSONResponse(pd.to_dict(), status_code=404)
 
 @router.post("/excluir_usuario", status_code=204)
 async def excluir_usuario(inputDto: IdClienteDto):
     if UsuarioRepo.excluir(inputDto.id_usuario): return None
-    pd = ProblemDetailsDto("int", f"O cliente com id <b>{inputDto.id_usuario}</b> não foi encontrado.", "value_not_found", ["body", "id_usuario"])
+    pd = ProblemDetailsDto("int", f"O usuário com id <b>{inputDto.id_usuario}</b> não foi encontrado.", "value_not_found", ["body", "id_usuario"])
     return JSONResponse(pd.to_dict(), status_code=404)

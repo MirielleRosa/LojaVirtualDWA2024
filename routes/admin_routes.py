@@ -100,3 +100,23 @@ async def obter_pedidos_por_estado(estado: EstadoPedido = Path(..., title="Estad
     await asyncio.sleep(1)
     pedidos = PedidoRepo.obter_todos_por_estado(estado.value)
     return pedidos
+
+@router.get("/obter_usuarios")
+async def obter_usuarios():
+    await asyncio.sleep(1)
+    usuarios = UsuarioRepo.obter_todos_por_perfil()
+    return usuarios
+
+@router.get("/obter_usuario/{id_usuario}")
+async def obter_usuario(id_usuario: int = Path(..., title="Id do Usuario", ge=1)):
+    usuario = UsuarioRepo.obter_por_id(id_usuario)
+    if usuario: return usuario
+    pd = ProblemDetailsDto("int", f"O usuário com id <b>{id_usuario}</b> não foi encontrado.", "value_not_found", ["body", "id_usuario"])
+    return JSONResponse(pd.to_dict(), status_code=404)
+
+@router.post("/excluir_usuario/{id_usuario}", status_code=204)
+async def excluir_usuario(id_usuario: int = Path(..., title="Id do Usuário", ge=1)):
+    if UsuarioRepo.excluir(id_usuario): 
+        return None
+    pd = ProblemDetailsDto("int", f"O usuário com id <b>{id_usuario}</b> não foi encontrado.", "value_not_found", ["body", "id"])
+    return JSONResponse(pd.to_dict(), status_code=404)

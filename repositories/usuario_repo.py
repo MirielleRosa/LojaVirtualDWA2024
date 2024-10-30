@@ -83,7 +83,7 @@ class UsuarioRepo:
         except sqlite3.Error as ex:
             print(ex)
             return False
-        
+
     @classmethod
     def obter_por_id(cls, id: int) -> Optional[Usuario]:
         try:
